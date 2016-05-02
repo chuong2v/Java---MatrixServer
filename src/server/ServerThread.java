@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import matrix.MatrixException;
 import matrix.Matrix;
 import matrix.SquareMatrix;
@@ -49,13 +47,14 @@ public class ServerThread extends Thread {
 
             dataOutputStream.writeDouble(m1.determinant());
             objectOutputStream.writeObject(m1.invert());
-            
-        } catch (ClassNotFoundException | MatrixException ex) {
+
+        } catch (ClassNotFoundException | MatrixException | IOException ex) {
             System.out.println(ex.toString());
-        } catch (IOException ex) {
-            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                dataOutputStream.writeUTF(ex.toString());
+            } catch (IOException ex1) {
+                System.out.println(ex1.toString());
+            }
         }
 
     }
